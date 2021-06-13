@@ -3,39 +3,47 @@ window.onload = function(){
     
     // const isProfile = isProfile();
     if(isProfile()){
-        console.log('Is profile Page');
+        // console.log('Is profile Page');
         localStorage.removeItem("created");
-        const setName = document.querySelector('#screenName');
+        const alert = document.querySelector("#alert");
+        const setScreenName = document.querySelector('#screenName');
         const setFirstName = document.querySelector('#firstName');
         const setLastName = document.querySelector('#lastName');
         const setdescriptionUser = document.querySelector('#descriptionUser');
         const tweetsButton = document.querySelector('#tweetsButton');
         const profileButton = document.querySelector('#profileButton');
         const editButton = document.querySelector('#editButton');
+        const updateButton = document.querySelector('#updateButton');
         const tweetsPanel = document.querySelector('#tweets');
         const profilePanel = document.querySelector('#profile');
         const editPanel = document.querySelector('#edit');
+        const updateFirstName  = document.querySelector('#updateFirstName'); 
+        const updateLastName = document.querySelector('#updateLastName');
+        const updatePathImage = document.querySelector('#updatePathImage');
+        const updateDescription = document.querySelector('#updateDescription');
         const user = localStorage.getItem('userInfo');
         const descriptions = (localStorage.getItem('descriptions')).split(",");
+        
 
         const {
                 firstName,
                 lastName,
                 descriptionUser,
+                pathImage,
                 screenName,
               } = JSON.parse(user) ;
         // console.log("userName: ", firstName+" "+lastName);
         // console.log("screenName: ", screenName);
         // console.log("descriptionUser: ", descriptionUser);
-        console.log("descriptions: ", descriptions)
+        // console.log("descriptions: ", descriptions)
         
-        setName.innerHTML = `@${screenName}`;
+        setScreenName.innerHTML = `@${screenName}`;
         setdescriptionUser.innerHTML = descriptionUser;
         setFirstName.textContent += `${firstName}`;
         setLastName.textContent += `${lastName}`;
         
         tweetsButton.onclick = (event) => {
-            console.log("tweetsButton");
+            // console.log("tweetsButton");
             const created = localStorage.getItem('created');
             event.preventDefault();
             hideShowPanel({
@@ -56,7 +64,7 @@ window.onload = function(){
         }
         
         profileButton.onclick = (event) => {
-            console.log("profileButton");
+            // console.log("profileButton");
             event.preventDefault();
             hideShowPanel({
                            option: "profile", 
@@ -66,7 +74,7 @@ window.onload = function(){
                          })
         }
         editButton.onclick = (event) => {
-            console.log("editButton");
+            // console.log("editButton");
             event.preventDefault();
             hideShowPanel({
                            option: "edit", 
@@ -74,19 +82,119 @@ window.onload = function(){
                            profile:profilePanel,
                            edit:editPanel,
                          })
+            updateFirstName.value = firstName;
+            updateLastName.value = lastName;
+            updatePathImage.value = pathImage;
+            updateDescription.value = descriptionUser;
+            
         }
-        
+        updateButton.onclick = () => {
+            console.log("updateButton");
+            const currentFirstName = updateFirstName.value;
+            const currentLastName = updateLastName.value;
+            const currentPathImage = updatePathImage.value;
+            const currentDescription = updateDescription.value;
 
-
+            // console.log("currentFirstName", currentFirstName);
+            // console.log("currentLastName", currentLastName);
+            // console.log("currentPathImage", currentPathImage);
+            // console.log("currentDescription", currentDescription);
+            if(
+                currentFirstName.trim() !== '' &&
+                currentLastName.trim() !== '' &&
+                currentPathImage.trim() !== '' &&
+                currentDescription.trim() !== '' 
+            ){
+                const updateURL = "http://localhost:5000/users/update";
+                const params = {
+                    screenName : screenName.toLowerCase(),
+                    firstName : currentFirstName,
+                    lastName : currentLastName,
+                    description : currentDescription,
+                    pathImage : currentPathImage,
+                }
+                const options = {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(params),
+                };
+                fetch(updateURL, options)
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data)
+                    const { err } = data;
+                    if(!err){
+                        updateFirstName.value = currentFirstName;
+                        updateLastName.value = currentLastName;
+                        updatePathImage.value = currentPathImage;
+                        updateDescription.value = currentDescription;
+                        const userInfo = {
+                            firstName: currentFirstName,
+                            lastName: currentLastName,
+                            descriptionUser:currentDescription,
+                            pathImage: currentPathImage,
+                            screenName: screenName,
+                        }
+                        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                        hideShowAlert({
+                            alert: alert, 
+                            hide: false,
+                            text: "User info updated",
+                            option: "success",
+                        });
+                        setTimeout(() => {  
+                            hideShowAlert({
+                                alert: alert, 
+                                hide: true,
+                                text: "",
+                                option: "success",
+                            });
+                        }, 3000);
+                    } else {
+                        hideShowAlert({
+                            alert: alert, 
+                            hide: false,
+                            text: "Error tring to update",
+                            option: "warning",
+                        });
+                        setTimeout(() => {  
+                            hideShowAlert({
+                                alert: alert, 
+                                hide: true,
+                                text: "",
+                                option: "warning",
+                            });
+                        }, 3000);
+                    }
+                });
+            } else {
+                hideShowAlert({
+                    alert: alert, 
+                    hide: false,
+                    text: "Please fill in all fields ",
+                    option: "warning",
+                });
+                setTimeout(() => {  
+                    hideShowAlert({
+                        alert: alert, 
+                        hide: true,
+                        text: "",
+                        option: "warning",
+                    });
+                }, 3000);
+            }
+        }
     } else {
         console.log('Is not profile Page');
         const buttonSearch = document.querySelector('#searchUser');
         buttonSearch.onclick = async (event) => {
             event.preventDefault();
-            console.log('onclick detected')
+            // console.log('onclick detected')
             const screenName = (document.querySelector('#screenName').value).toLowerCase();
             const alert = document.querySelector('#alert');
-            console.log('screenName: ', screenName);
+            // console.log('screenName: ', screenName);
     
             if(screenName.trim() !== ''){
                 const UrlTwitter = `http://localhost:5000/getTweets/${screenName}`;
@@ -104,7 +212,7 @@ window.onload = function(){
                                 hideShowAlert({
                                     alert: alert, 
                                     hide: false,
-                                    text: "User finded..Redirecting",
+                                    text: "User finded...Redirecting",
                                     option: "success",
                                 });
                                 setTimeout(() => {  
@@ -118,13 +226,15 @@ window.onload = function(){
                                 const firstName = user.Item.name ;  const lastName = user.Item.last_name;
                                 const fullName = firstName + " " + lastName;
                                 const descriptionUser = user.Item.description;
+                                const pathImage = user.Item.path_image;
+                                // console.log("pathImage: ", pathImage);
                                 // console.log("Fullname: ", fullName)
                                 // console.log("User description: ", descriptionUser);
                                 // console.log(tweets);
                                 const screenName = tweets[0].user.screen_name;
                                 // console.log("@", screenName);
                                 let descriptions = [];
-                                for(let i=0; i<5; i++){
+                                for(let i=0; i<5; i++){ //alterar par foreach
                                     // console.log("Twit #", i+1);
                                     // console.log("Twit description: ", tweets[i].text);
                                     descriptions.push(tweets[i].text);
@@ -133,6 +243,7 @@ window.onload = function(){
                                     firstName: firstName,
                                     lastName: lastName,
                                     descriptionUser:descriptionUser,
+                                    pathImage: pathImage,
                                     screenName: screenName,
                                 }
                                 localStorage.setItem('descriptions', descriptions);
@@ -187,7 +298,7 @@ window.onload = function(){
                     hideShowAlert({
                         alert: alert, 
                         hide: true,
-                        text: "User not finded",
+                        text: "",
                         option: "warning",
                     });
                 }, 3000);
@@ -252,8 +363,8 @@ window.onload = function(){
 }
 const isProfile = () => {
         const currentUrl = window.location.href;
-        console.log(currentUrl);
+        // console.log(currentUrl);
         const isProfile = currentUrl.includes("/profile") ? true : false;
-        console.log(isProfile);
+        // console.log(isProfile);
         return isProfile;
 }

@@ -16,6 +16,8 @@
 <body>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <a href="/" class="back">&laquo; Back Home</a>
+    <div id="alert" class="alert alert-success hide">
+    </div>
     <div class="container bootstrap snippets bootdey">
         <div class="row">
             <div class="profile-nav col-md-3">
@@ -36,17 +38,6 @@
                 </div>
             </div>
             <div class="profile-info col-md-9">
-                <div id="panelPost" class="panel">
-                    <!-- <form> -->
-                        <textarea placeholder="Whats in your mind today?" rows="2"
-                            class="form-control input-lg p-text-area"></textarea>
-                    <!-- </form> -->
-                    <footer class="panel-footer">
-                        <button class="btn btn-warning pull-right">Post</button>
-                        <ul class="nav nav-pills">
-                        </ul>
-                    </footer>
-                </div>
                 <div id="tweets" class="panel padding-container">
                     <h3 id="titles">Tweets</h3>
                 </div>
@@ -64,19 +55,19 @@
                             </div> -->
                             <div class="col-xs-6">
                                 <label for="ex3">First Name</label>
-                                <input class="form-control" id="firstNameUpdate" type="text">
+                                <input class="form-control" id="updateFirstName" type="text">
                             </div>
                             <div class="col-xs-6">
                                 <label for="ex3">Last Name</label>
-                                <input class="form-control" id="lastNameUpdate" type="text">
+                                <input class="form-control" id="updateLastName" type="text">
                             </div>
                             <div class="col-xs-6">
                                 <label for="ex3">Path Image</label>
-                                <input class="form-control" id="pathImageUpdate" type="text">
+                                <input class="form-control" id="updatePathImage" type="text">
                             </div>
                             <div class="col-xs-12">
                                 <label for="exampleFormControlTextarea1">Description</label>
-                                <textarea class="form-control" id="descriptionUpdate" rows="3"></textarea>
+                                <textarea class="form-control" id="updateDescription" rows="3"></textarea>
                             </div>
                         </div>
                         <button type="button" id="updateButton" class="btn btn-primary btn-lg btn-block mb-20">Save</button>
@@ -107,6 +98,19 @@
     </div>
 
     <style>
+        #alert { 
+            text-align: right;
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .hide {
+            opacity: 0;
+            transition: opacity 1000ms;
+        }
+        .show {
+            opacity: 1;
+            transition: opacity 500ms;
+        }
         .back {
             text-decoration: none;
             display: inline-block;
@@ -116,7 +120,6 @@
             font-size: 17px;
             font-weight: bold;
         }
-
         #titles {
             margin-left: 10px;
         }

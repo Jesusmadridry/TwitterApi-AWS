@@ -13,7 +13,7 @@ const TABLE_NAME = "userInfo";
 
 
 
-const addOrUpdateCharacter = async (character) => {
+const addUser= async (character) => {
     const params = {
         TableName: TABLE_NAME,
         Item: character
@@ -21,7 +21,32 @@ const addOrUpdateCharacter = async (character) => {
     return await dynamoClient.put(params).promise();
 }
 
-const getCharacters = async () => {
+const updateUser = async (user, res) => {
+    const {firstName, lastName, description, pathImage, screenName} = user;
+    const params = {
+        TableName: TABLE_NAME,
+        Key:{
+            "user_twitter": screenName,
+        },
+        UpdateExpression: "SET #name = :n, last_name = :ln, description = :d, path_image = :pi",
+        ExpressionAttributeNames:{
+            "#name": "name",
+        },
+        ExpressionAttributeValues:{
+            ":n": firstName,
+            ":ln": lastName,
+            ":d": description,
+            ":pi": pathImage,
+        }
+    }
+    const updatedUser = await dynamoClient.update(params).promise();
+    res.json({
+        status: "success",
+    })
+    console.log(updatedUser);
+}
+
+const getUsers = async () => {
     const params = {
         TableName: TABLE_NAME
     };
@@ -56,12 +81,13 @@ const deleteCharacter = async (screenName) => {
 // addOrUpdate(user);
 // getCharacters();
 // getCharacterById();
-
+// updateUser();
 
 module.exports = {
     dynamoClient,
-    getCharacters,
+    getUsers,
     getByScreenName,
-    addOrUpdateCharacter,
+    addUser,
+    updateUser,
     deleteCharacter
 }

@@ -1,25 +1,16 @@
 const express = require('express');
 const path = require('path');
-const { getByScreenName, getCharacters, addOrUpdateCharacter, deleteCharacter } = require('./dynamo');
+const { getByScreenName, 
+        getUsers, 
+        updateUser, 
+} = require('./dynamo');
 const {getUserTimeLines} = require('./twitterApi');
 
 const app = express();
 
 app.use(express.json());
-const Twitter = require('twitter');
 require('dotenv').config();
 
-// const apiKey = process.env.TWITTER_API_KEY;
-// const apiSecretKey = process.env.TWITTER_SECRET_KEY;
-// const accessToken = process.env.TWITTER_ACCESS_TOKEN;
-// const accessTokenSecret = process.env.TWITTER_TOKEN_SECRET;
-
-// const twitterClient = new Twitter({
-//     consumer_key: apiKey,
-//     consumer_secret: apiSecretKey,
-//     access_token_key: accessToken,
-//     access_token_secret: accessTokenSecret,
-// });
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
@@ -56,48 +47,45 @@ app.get('/users/:screenName', async (req, res) => {
 
 app.get('/users', async (req, res) => {
     try {
-        const characters = await getCharacters();
-        res.json(characters);
+        const users = await getUsers();
+        res.json(users);
     } catch (error) {
         console.log(error);
         res.status(500).json({err: 'Something went wrong'});
     }
 })
 
-app.post('/users/create', async (req, res) => {
+// app.post('/users/create', async (req, res) => {
+//     const user = req.body;
+//     try {
+//         const newUser = await addUser(user);
+//         res.json(newUser);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({err: 'Something went wrong'});
+//     }
+// })
+
+app.put('/users/update', async (req, res) => {
     const user = req.body;
     try {
-        const newUser = await addOrUpdateCharacter(user);
-        res.json(newUser);
+        const updatedUser = await updateUser(user, res);
     } catch (error) {
         console.log(error);
         res.status(500).json({err: 'Something went wrong'});
     }
 })
 
-app.put('/users/update/:id', async (req, res) => {
-    const user = req.body;
-    const id = parseInt(req.params.id);
-    user.id = id;
-    try {
-        const updatedUser = await addOrUpdateCharacter(user);
-        res.json(updatedUser);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({err: 'Something went wrong'});
-    }
-})
-
-app.delete('users/delete/:id', async () => {
-    const id = parseInt(req.params.id);
-    try {
-        const deletedUser = await deleteCharacter(user);
-        res.json(deletedUser);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({err: 'Something went wrong'});
-    }
-})
+// app.delete('users/delete/:screenName', async () => {
+//     const screenName = req.params.screenName;
+//     try {
+//         const deletedUser = await deleteCharacter(user, res);
+//         res.json(deletedUser);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({err: 'Something went wrong'});
+//     }
+// })
 
 const port = process.env.PORT || 5000;
 
