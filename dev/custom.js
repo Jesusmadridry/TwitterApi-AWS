@@ -1,5 +1,9 @@
 window.onload = function(){
+    console.log('On load Script');
+    
+    // const isProfile = isProfile();
     if(isProfile()){
+        // console.log('Is profile Page');
         localStorage.removeItem("created");
         const alert = document.querySelector("#alert");
         const setScreenName = document.querySelector('#screenName');
@@ -19,6 +23,7 @@ window.onload = function(){
         const updateDescription = document.querySelector('#updateDescription');
         const user = localStorage.getItem('userInfo');
         const descriptions = (localStorage.getItem('descriptions')).split(",");
+        
 
         const {
                 firstName,
@@ -27,6 +32,10 @@ window.onload = function(){
                 pathImage,
                 screenName,
               } = JSON.parse(user) ;
+        // console.log("userName: ", firstName+" "+lastName);
+        // console.log("screenName: ", screenName);
+        // console.log("descriptionUser: ", descriptionUser);
+        // console.log("descriptions: ", descriptions)
         
         setScreenName.innerHTML = `@${screenName}`;
         setdescriptionUser.innerHTML = descriptionUser;
@@ -34,6 +43,7 @@ window.onload = function(){
         setLastName.textContent += `${lastName}`;
         
         tweetsButton.onclick = (event) => {
+            // console.log("tweetsButton");
             const created = localStorage.getItem('created');
             event.preventDefault();
             hideShowPanel({
@@ -54,6 +64,7 @@ window.onload = function(){
         }
         
         profileButton.onclick = (event) => {
+            // console.log("profileButton");
             event.preventDefault();
             hideShowPanel({
                            option: "profile", 
@@ -63,6 +74,7 @@ window.onload = function(){
                          })
         }
         editButton.onclick = (event) => {
+            // console.log("editButton");
             event.preventDefault();
             hideShowPanel({
                            option: "edit", 
@@ -82,6 +94,11 @@ window.onload = function(){
             const currentLastName = updateLastName.value;
             const currentPathImage = updatePathImage.value;
             const currentDescription = updateDescription.value;
+
+            // console.log("currentFirstName", currentFirstName);
+            // console.log("currentLastName", currentLastName);
+            // console.log("currentPathImage", currentPathImage);
+            // console.log("currentDescription", currentDescription);
             if(
                 currentFirstName.trim() !== '' &&
                 currentLastName.trim() !== '' &&
@@ -174,14 +191,18 @@ window.onload = function(){
         const buttonSearch = document.querySelector('#searchUser');
         buttonSearch.onclick = async (event) => {
             event.preventDefault();
+            // console.log('onclick detected')
             const screenName = (document.querySelector('#screenName').value).toLowerCase();
             const alert = document.querySelector('#alert');
+            // console.log('screenName: ', screenName);
+    
             if(screenName.trim() !== ''){
                 const UrlTwitter = `http://localhost:5000/getTweets/${screenName}`;
                 const UrlDB = `http://localhost:5000/users/${screenName}`;
                 fetch(UrlDB)
                 .then(res => res.json())
                 .then((user) => {
+                    // console.log("User information: ", user);
                     if(Object.keys(user).length !== 0){
                         fetch(UrlTwitter)
                         .then(res => res.json())
@@ -203,14 +224,20 @@ window.onload = function(){
                                     });
                                 }, 3000);
                                 const firstName = user.Item.name ;  const lastName = user.Item.last_name;
+                                const fullName = firstName + " " + lastName;
                                 const descriptionUser = user.Item.description;
                                 const pathImage = user.Item.path_image;
+                                // console.log("pathImage: ", pathImage);
+                                // console.log("Fullname: ", fullName)
+                                // console.log("User description: ", descriptionUser);
+                                // console.log(tweets);
                                 const screenName = tweets[0].user.screen_name;
+                                // console.log("@", screenName);
                                 let descriptions = [];
                                 for(let i=0; i<5; i++){ //alterar par foreach
-                                    if(tweets[i].text !== ''){
-                                        descriptions.push(tweets[i].text);
-                                    }
+                                    // console.log("Twit #", i+1);
+                                    // console.log("Twit description: ", tweets[i].text);
+                                    descriptions.push(tweets[i].text);
                                 }
                                 const userInfo = {
                                     firstName: firstName,
@@ -331,10 +358,13 @@ window.onload = function(){
         tweetContainer.appendChild(tweetScreen);
         tweetContainer.appendChild(tweetDescription);
         tweetsContainer.appendChild(tweetContainer);
+
     }
 }
 const isProfile = () => {
         const currentUrl = window.location.href;
+        // console.log(currentUrl);
         const isProfile = currentUrl.includes("/profile") ? true : false;
+        // console.log(isProfile);
         return isProfile;
 }

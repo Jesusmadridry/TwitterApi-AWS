@@ -23,7 +23,6 @@ const getUserTimeLines = (serverParams) => {
             res.json({error: error});
         }
     });
-    // console.log("inside Function: ", tweets)
 }
 
 module.exports = {

@@ -55,6 +55,17 @@ app.get('/users', async (req, res) => {
     }
 })
 
+// app.post('/users/create', async (req, res) => {
+//     const user = req.body;
+//     try {
+//         const newUser = await addUser(user);
+//         res.json(newUser);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({err: 'Something went wrong'});
+//     }
+// })
+
 app.put('/users/update', async (req, res) => {
     const user = req.body;
     try {
@@ -64,6 +75,17 @@ app.put('/users/update', async (req, res) => {
         res.status(500).json({err: 'Something went wrong'});
     }
 })
+
+// app.delete('users/delete/:screenName', async () => {
+//     const screenName = req.params.screenName;
+//     try {
+//         const deletedUser = await deleteCharacter(user, res);
+//         res.json(deletedUser);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({err: 'Something went wrong'});
+//     }
+// })
 
 const port = process.env.PORT || 5000;
 
