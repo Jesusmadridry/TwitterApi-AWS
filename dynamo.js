@@ -8,7 +8,18 @@ AWS.config.update({
 })
 
 const dynamoClient = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = "briefcase";
+const TABLE_NAME = "userInfo";
+
+
+
+
+const addOrUpdateCharacter = async (character) => {
+    const params = {
+        TableName: TABLE_NAME,
+        Item: character
+    }
+    return await dynamoClient.put(params).promise();
+}
 
 const getCharacters = async () => {
     const params = {
@@ -19,24 +30,38 @@ const getCharacters = async () => {
     return characters;   
 };
 
-const user = 
-{
-    id: 1,
-    path_image: "img/JuanCastro.png",
-    name: "Juan Alberto",
-    description: "System engineer of the University Piloto de Colombia, Campus Alto Magdalena, skills in        software programming with 3 years of experience in PHP, experience of 2 years in JAVA with a year using Spring framework, also with the certifications OCA in this language and Rectified Architecture, knowledge",
-    user_twitter: "katyperry",
-    last_name: "Castro"
-}
-
-const addOrUpdate = async (character) => {
+const getByScreenName = async (screenName) => {
     const params = {
         TableName: TABLE_NAME,
-        Item: character
+        Key: {
+            user_twitter: screenName
+        }
     }
-    return await dynamoClient.put(params).promise();
+    const character = await dynamoClient.get(params).promise();
+    console.log(character);
+    return character;
+}
+
+const deleteCharacter = async (screenName) => {
+    const params = {
+        TableName: TABLE_NAME,
+        Key: {
+            user_twitter: screenName
+        }
+    }
+    return await dynamoClient.delete(params).promise();
 }
 
 
 // addOrUpdate(user);
-getCharacters();
+// getCharacters();
+// getCharacterById();
+
+
+module.exports = {
+    dynamoClient,
+    getCharacters,
+    getByScreenName,
+    addOrUpdateCharacter,
+    deleteCharacter
+}
